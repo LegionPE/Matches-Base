@@ -36,4 +36,8 @@ class MatchSession extends Session{
 	public function getCurrentMatch(){
 		return $this->match;
 	}
+	public function login($method){
+		parent::login($method);
+
+	}
 }
