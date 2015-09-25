@@ -20,7 +20,7 @@ class BaseMatch{
 	private $main;
 	/** @var int */
 	private $gameId;
-	/** @var Matchsession[] */
+	/** @var MatchSession[] */
 	private $players = [], $spectators = [];
 	public function __construct(MatchPlugin $main, $gameId){
 		$this->main = $main;
