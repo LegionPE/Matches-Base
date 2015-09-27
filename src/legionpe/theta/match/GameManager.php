@@ -21,7 +21,8 @@ use pocketmine\scheduler\PluginTask;
 class GameManager extends PluginTask{
 	private $main;
 	private $vacantMatches = [];
-	private $runningMatches = [];
+	private /** @noinspection PhpUnusedPrivateFieldInspection */
+		$runningMatches = [];
 	public function __construct(MatchPlugin $main){
 		parent::__construct($this->main = $main);
 	}
