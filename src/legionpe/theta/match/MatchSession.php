@@ -21,8 +21,6 @@ use pocketmine\Player;
 class MatchSession extends Session{
 	/** @var MatchPlugin */
 	private $main;
-	/** @var BaseMatch|null */
-	private $match = null;
 	public function __construct(MatchPlugin $main, Player $player, array $loginData){
 		parent::__construct($player, $loginData);
 		$this->main = $main;
@@ -30,14 +28,7 @@ class MatchSession extends Session{
 	public function getMain(){
 		return $this->main;
 	}
-	/**
-	 * @return BaseMatch|null
-	 */
-	public function getCurrentMatch(){
-		return $this->match;
-	}
 	public function login($method){
 		parent::login($method);
-
 	}
 }

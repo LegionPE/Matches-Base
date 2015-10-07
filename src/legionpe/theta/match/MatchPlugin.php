@@ -19,19 +19,8 @@ use legionpe\theta\BasePlugin;
 use pocketmine\Player;
 
 abstract class MatchPlugin extends BasePlugin{
-	private $gameManager;
 	public function onEnable(){
 		parent::onEnable();
-		$this->getServer()->getScheduler()->scheduleRepeatingTask($this->gameManager = new GameManager($this), 10);
-	}
-	/**
-	 * @return GameManager
-	 */
-	public function getGameManager(){
-		return $this->gameManager;
-	}
-	public function getMatchImpl($gameId){
-		return new BaseMatch($this, $gameId);
 	}
 	protected function createSession(Player $player, array $loginData){
 		return new MatchSession($this, $player, $loginData);
