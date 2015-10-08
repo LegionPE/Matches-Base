@@ -19,12 +19,13 @@ use legionpe\theta\match\MatchPlugin;
 use legionpe\theta\match\query\MatchInfoQuery;
 
 abstract class LogInfo{
-	const TYPE_SYSTEM_OPEN = 0x00;
-	const TYPE_SYSTEM_PREPARE = 0x01;
-	const TYPE_SYSTEM_RUN = 0x02;
-	const TYPE_SYSTEM_CLOSE = 0x03;
+	const TYPE_SYSTEM_OPEN = 0x0000;
+	const TYPE_SYSTEM_PREPARE = 0x0001;
+	const TYPE_SYSTEM_RUN = 0x0002;
+	const TYPE_SYSTEM_CLOSE = 0x0003;
 
-	const TYPE_JOINQUIT_JOIN_PLAYER = 0x10;
+	const TYPE_JOINQUIT_JOIN_PLAYER = 0x0100;
+	const TYPE_JOINQUIT_JOIN_SPECTATOR = 0x0101;
 
 	public $_meta_class;
 	public function __construct(){

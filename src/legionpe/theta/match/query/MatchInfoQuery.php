@@ -21,6 +21,8 @@ use legionpe\theta\query\AsyncQuery;
 
 class MatchInfoQuery extends AsyncQuery{
 	/** @var int */
+	private $class;
+	/** @var int */
 	private $type;
 	/** @var string */
 	private $metadata;
@@ -44,6 +46,6 @@ class MatchInfoQuery extends AsyncQuery{
 		return self::TYPE_RAW;
 	}
 	public function getQuery(){
-		return "INSERT INTO match_events (mid, type, time, tags, json) VALUES ($this->mid, $this->type, unix_timestamp(), {$this->esc($this->tags)}, {$this->esc($this->metadata)})";
+		return "INSERT INTO logs.match_events (mid, class, type, time, tags, json) VALUES ($this->mid, $this->class, $this->type, unix_timestamp(), {$this->esc($this->tags)}, {$this->esc($this->metadata)})";
 	}
 }
