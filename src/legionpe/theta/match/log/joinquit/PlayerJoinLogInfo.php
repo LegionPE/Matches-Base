@@ -19,13 +19,15 @@ use legionpe\theta\match\log\LogInfo;
 
 class PlayerJoinLogInfo extends LogInfo{
 	public $uid;
+	public $cnt;
 
 	public function getType(){
 		return self::TYPE_JOINQUIT_JOIN_PLAYER;
 	}
-	public static function get($uid){
+	public static function get($uid, $cnt){
 		$info = new PlayerJoinLogInfo;
 		$info->uid = $uid;
+		$info->cnt = $cnt;
 		return $info;
 	}
 }

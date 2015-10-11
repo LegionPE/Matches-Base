@@ -15,16 +15,16 @@
 
 namespace legionpe\theta\match;
 
-use legionpe\theta\lang\Phrases;
-use legionpe\theta\match\log\joinquit\PlayerJoinLogInfo;
+use legionpe\theta\match\match\Match;
 use legionpe\theta\Session;
 use pocketmine\Player;
 
 abstract class MatchSession extends Session{
 	/** @var MatchPlugin */
 	private $main;
-	/** @var bool */
-	private $isPlayer;
+	/** @var Match|null */
+	private $match = null;
+	private $isPlayer = false;
 	public function __construct(MatchPlugin $main, Player $player, array $loginData){
 		parent::__construct($player, $loginData);
 		$this->main = $main;
@@ -34,24 +34,24 @@ abstract class MatchSession extends Session{
 	}
 	public function login($method){
 		parent::login($method);
-		$this->isPlayer = $this->getMain()->getState() === MatchPlugin::STATE_OPEN;
-		$this->send(Phrases::MATCH_WHATISTHIS, [
-			"match" => $this->getMain()->getInstanceId(),
-			"role" => $this->translate($this->isPlayer() ? Phrases::MATCH_TERMS_PLAYER : Phrases::MATCH_TERMS_SPECTATOR)
-		]);
-		if($this->isPlayer){
-			PlayerJoinLogInfo::get($this->getUid())->log($this->getMain(), ["name:" . $this->getPlayer()->getName()]);
-		}
 	}
 	/**
-	 * @return boolean
+	 * @return Match|null
 	 */
+	public function getMatch(){
+		return $this->match;
+	}
+	/**
+	 * @param Match|null $match
+	 * @param bool $isPlayer
+	 */
+	public function setMatch($match, $isPlayer = false){
+		$this->match = $match;
+		$this->isPlayer = $isPlayer;
+	}
 	public function isPlayer(){
 		return $this->isPlayer;
 	}
-	/**
-	 * @return boolean
-	 */
 	public function isSpectator(){
 		return !$this->isPlayer;
 	}

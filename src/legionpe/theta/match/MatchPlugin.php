@@ -16,41 +16,29 @@
 namespace legionpe\theta\match;
 
 use legionpe\theta\BasePlugin;
-use legionpe\theta\config\Settings;
-use legionpe\theta\match\log\system\StartOpenLogInfo;
-use legionpe\theta\query\NextIdQuery;
+use legionpe\theta\match\match\Match;
+use legionpe\theta\match\utils\FireMatchesTask;
 
 abstract class MatchPlugin extends BasePlugin{
-	const STATE_OPEN = 0;
-	const STATE_PREPARING = 1;
-	const STATE_RUNNING = 2;
-	const STATE_CLOSING = 3;
-	private $instanceId;
-	private $state = self::STATE_OPEN;
+	/** @var Match[] */
+	private $matches = [];
 	public function onEnable(){
 		parent::onEnable();
-		$this->getLogger()->notice("Fetching instance ID...");
-		$name = NextIdQuery::MATCH;
-		$db = $this->getDb();
-		$db->begin_transaction();
-		$result = $db->query("SELECT value+1 AS result FROM ids WHERE name='$name' FOR UPDATE");
-		$this->getDb()->query("UPDATE ids SET value=value+1 WHERE name='$name'");
-		$this->getDb()->commit();
-		$this->instanceId = (int) $result->fetch_assoc()["result"];
-		$result->close();
-		$this->getLogger()->notice("Instance ID: $this->instanceId");
-		StartOpenLogInfo::get(Settings::$LOCALIZE_IP, Settings::$LOCALIZE_PORT, Settings::$SYSTEM_IS_TEST)->log($this);
+		$this->getServer()->getScheduler()->scheduleRepeatingTask(new FireMatchesTask($this), 10);
 	}
 	/**
-	 * @return int
+	 * @return Match[]
 	 */
-	public function getInstanceId(){
-		return $this->instanceId;
+	public function getMatches(){
+		return $this->matches;
 	}
-	/**
-	 * @return int
-	 */
-	public function getState(){
-		return $this->state;
+	public function addMatch($instanceId){
+		$this->matches[$instanceId] = new Match($this, $instanceId);
+	}
+	public function removeMatch(Match $match){
+		if(!$match->isClosed()){
+			throw new \RuntimeException("Attempt to remove an unclosed match");
+		}
+		unset($this->matches[$match->getInstanceId()]);
 	}
 }
