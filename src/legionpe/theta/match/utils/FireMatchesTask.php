@@ -28,6 +28,6 @@ class FireMatchesTask extends PluginTask{
 				return;
 			}
 		}
-		new StartMatchQuery($main);
+		new StartMatchQuery($main, $main->getNextConfiguration());
 	}
 }

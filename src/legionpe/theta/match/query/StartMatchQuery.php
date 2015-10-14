@@ -15,16 +15,22 @@
 
 namespace legionpe\theta\match\query;
 
+use legionpe\theta\match\match\MatchConfiguration;
 use legionpe\theta\match\MatchPlugin;
 use legionpe\theta\query\NextIdQuery;
 use pocketmine\Server;
 
 class StartMatchQuery extends NextIdQuery{
-	public function __construct(MatchPlugin $main){
+	/** @var int */
+	private $config;
+	public function __construct(MatchPlugin $main, MatchConfiguration $config){
+		$this->config = $main->storeObject($config);
 		parent::__construct($main, self::MATCH);
 	}
 	public function onCompletion(Server $server){
 		$main = MatchPlugin::getInstance($server);
-		$main->addMatch($this->getId());
+		/** @var MatchConfiguration $config */
+		$config = $main->fetchObject($this->config);
+		$main->addMatch($this->getId(), $config);
 	}
 }

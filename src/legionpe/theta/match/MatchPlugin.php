@@ -17,6 +17,7 @@ namespace legionpe\theta\match;
 
 use legionpe\theta\BasePlugin;
 use legionpe\theta\match\match\Match;
+use legionpe\theta\match\match\MatchConfiguration;
 use legionpe\theta\match\utils\FireMatchesTask;
 
 abstract class MatchPlugin extends BasePlugin{
@@ -32,8 +33,8 @@ abstract class MatchPlugin extends BasePlugin{
 	public function getMatches(){
 		return $this->matches;
 	}
-	public function addMatch($instanceId){
-		$this->matches[$instanceId] = new Match($this, $instanceId);
+	public function addMatch($instanceId, MatchConfiguration $config){
+		$this->matches[$instanceId] = new Match($this, $instanceId, $config);
 	}
 	public function removeMatch(Match $match){
 		if(!$match->isClosed()){
@@ -41,4 +42,8 @@ abstract class MatchPlugin extends BasePlugin{
 		}
 		unset($this->matches[$match->getInstanceId()]);
 	}
+	/**
+	 * @return MatchConfiguration
+	 */
+	public abstract function getNextConfiguration();
 }

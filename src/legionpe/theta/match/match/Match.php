@@ -25,8 +25,10 @@ use legionpe\theta\match\MatchSession;
 class Match{
 	const STATE_OPEN = 0;
 	const STATE_PREPARING = 1;
-	const STATE_RUNNING = 2;
-	const STATE_CLOSING = 3;
+	const STATE_PRE_RUNNING = 2;
+	const STATE_RUNNING = 3;
+	const STATE_CLOSING = 4;
+
 	/** @var MatchPlugin */
 	private $main;
 	/** @var int */
@@ -36,7 +38,7 @@ class Match{
 	/** @var MatchSession[] */
 	private $sessions = [];
 
-	public function __construct(MatchPlugin $main, $instanceId){
+	public function __construct(MatchPlugin $main, $instanceId, MatchConfiguration $config){
 		$this->main = $main;
 		$this->instanceId = $instanceId;
 		$this->getMain()->getLogger()->notice("Instance ID: $this->instanceId");
