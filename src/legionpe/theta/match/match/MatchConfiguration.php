@@ -15,9 +15,13 @@
 
 namespace legionpe\theta\match\match;
 
+use pocketmine\level\Location;
+
 class MatchConfiguration{
 	/** @var int in seconds */
 	public $minWaitTime, $maxWaitTime, $preRunWaitTime;
 	/** @var int */
 	public $minStartPlayers, $maxPlayers;
+	/** @var Location[] */
+	public $spawnLocs;
 }

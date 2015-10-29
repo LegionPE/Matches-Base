@@ -15,7 +15,7 @@
 
 namespace legionpe\theta\match\log;
 
-use legionpe\theta\match\MatchPlugin;
+use legionpe\theta\match\match\Match;
 use legionpe\theta\match\query\MatchInfoQuery;
 
 abstract class LogInfo{
@@ -36,10 +36,10 @@ abstract class LogInfo{
 	 */
 	public abstract function getType();
 	/**
-	 * @param MatchPlugin $main
+	 * @param Match $match
 	 * @param string[] $tags
 	 */
-	public function log(MatchPlugin $main, array $tags = []){
-		new MatchInfoQuery($main, $this, $tags);
+	public function log(Match $match, array $tags = []){
+		new MatchInfoQuery($match, $this, $tags);
 	}
 }

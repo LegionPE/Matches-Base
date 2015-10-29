@@ -16,7 +16,7 @@
 namespace legionpe\theta\match\query;
 
 use legionpe\theta\match\log\LogInfo;
-use legionpe\theta\match\MatchPlugin;
+use legionpe\theta\match\match\Match;
 use legionpe\theta\query\AsyncQuery;
 
 class MatchInfoQuery extends AsyncQuery{
@@ -29,18 +29,18 @@ class MatchInfoQuery extends AsyncQuery{
 	/** @var string[] */
 	private $tags;
 	/**
-	 * @param MatchPlugin $main
+	 * @param Match $match
 	 * @param LogInfo $info
 	 * @param string[] $tags
 	 */
-	public function __construct(MatchPlugin $main, LogInfo $info, array $tags = []){
-		$this->mid = $main->getInstanceId();
+	public function __construct(Match $match, LogInfo $info, array $tags = []){
+		$this->mid = $match->getInstanceId();
 		$this->type = $info->getType();
 		$this->tags = "," . implode(",", array_map(function ($tag){
 				return str_replace(",", "\\,\\", $tag);
 			}, $tags)) . ",";
 		$this->metadata = json_encode($info);
-		parent::__construct($main);
+		parent::__construct($match->getMain());
 	}
 	public function getResultType(){
 		return self::TYPE_RAW;
