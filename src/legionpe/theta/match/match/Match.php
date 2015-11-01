@@ -15,9 +15,16 @@
 
 namespace legionpe\theta\match\match;
 
+use legionpe\theta\config\Settings;
 use legionpe\theta\lang\Phrases;
+use legionpe\theta\match\log\joinquit\PlayerJoinLogInfo;
+use legionpe\theta\match\log\joinquit\SpectatorJoinLogInfo;
+use legionpe\theta\match\log\system\StartOpenLogInfo;
 use legionpe\theta\match\MatchPlugin;
 use legionpe\theta\match\MatchSession;
+use pocketmine\level\Level;
+use RuntimeException;
+use ZipArchive;
 
 class Match{
 	const STATE_OPEN = 0;
@@ -38,13 +45,17 @@ class Match{
 
 	/** @var int internal counter in seconds */
 	private $ticks = 0;
+	/** @var string */
+	private $worldName;
+	/** @var Level */
+	private $level;
 
 	public function __construct(MatchPlugin $main, $instanceId, MatchConfiguration $config){
 		$this->main = $main;
 		$this->instanceId = $instanceId;
 		$this->config = $config;
 		$this->getMain()->getLogger()->notice("Instance ID: $this->instanceId");
-		$main->StartOpenLogInfo($this)->log($this);
+		StartOpenLogInfo::get(Settings::$LOCALIZE_IP, Settings::$LOCALIZE_PORT, Settings::$SYSTEM_IS_TEST)->log($this);
 	}
 	/**
 	 * @return MatchPlugin
@@ -121,8 +132,8 @@ class Match{
 		$this->sessions[$session->getUid()] = true;
 		$session->setMatch($this, $isPlayer);
 		if($isPlayer){
-			$this->main->PlayerJoinLogInfo($this, $session)->log($this);
 			$cnt = count($this->getPlayers());
+			PlayerJoinLogInfo::get($session->getUid(), $cnt)->log($this);
 			if($cnt === $this->config->minStartPlayers){
 				$this->ticks = $this->config->maxWaitTime;
 			}elseif($cnt === $this->config->maxPlayers){
@@ -131,7 +142,7 @@ class Match{
 				$this->ticks = max($this->config->minWaitTime, $this->ticks);
 			}
 		}else{
-			$this->main->SpectatorJoinLogInfo($this, $session)->log($this);
+			SpectatorJoinLogInfo::get($session->getUid())->log($this);
 		}
 		return true;
 	}
@@ -178,5 +189,32 @@ class Match{
 		$this->onPreRun();
 	}
 	protected function onPreRun(){
+		$this->initWorld();
+	}
+	protected function initWorld(){
+		$path = $this->getWorldZip();
+		if($path !== null){
+			$zip = new ZipArchive;
+			if($zip->open($path) !== true){
+				throw new RuntimeException("Could not load zip world $path");
+			}
+			$this->worldName = "match_{$this->getInstanceId()}";
+			$target = $this->getMain()->getServer()->getDataPath() . "worlds/$this->worldName";
+			mkdir($target);
+			if(!$zip->extractTo($target)){
+				throw new RuntimeException("Could not import zip world $path");
+			}
+			$zip->close();
+		}else{
+			$this->worldName = $this->getWorldName();
+		}
+		$this->getMain()->getServer()->loadLevel($this->worldName);
+		$this->level = $this->getMain()->getServer()->getLevelByName($this->worldName);
+	}
+	protected function getWorldZip(){
+		return null;
+	}
+	protected function getWorldName(){
+		return $this->getMain()->query_world(); // implement either getWorldZip() or getWorldName()!
 	}
 }

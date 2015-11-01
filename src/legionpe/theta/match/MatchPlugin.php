@@ -16,11 +16,6 @@
 namespace legionpe\theta\match;
 
 use legionpe\theta\BasePlugin;
-use legionpe\theta\config\Settings;
-use legionpe\theta\match\log\joinquit\PlayerJoinLogInfo;
-use legionpe\theta\match\log\joinquit\SpectatorJoinLogInfo;
-use legionpe\theta\match\log\system\PreRunLogInfo;
-use legionpe\theta\match\log\system\StartOpenLogInfo;
 use legionpe\theta\match\match\Match;
 use legionpe\theta\match\match\MatchConfiguration;
 use legionpe\theta\match\utils\FireMatchesTask;
@@ -54,20 +49,4 @@ abstract class MatchPlugin extends BasePlugin{
 	 * @return MatchConfiguration
 	 */
 	public abstract function getNextConfiguration();
-
-	// log types
-	public function StartOpenLogInfo(/** @noinspection PhpUnusedParameterInspection */
-		Match $match){
-		return StartOpenLogInfo::get(Settings::$LOCALIZE_IP, Settings::$LOCALIZE_PORT, Settings::$SYSTEM_IS_TEST);
-	}
-	public function PreRunLogInfo(Match $match){
-		return PreRunLogInfo::get(count($match->getPlayers()));
-	}
-	public function PlayerJoinLogInfo(Match $match, MatchSession $session){
-		return PlayerJoinLogInfo::get($session->getUid(), count($match->getPlayers()));
-	}
-	public function SpectatorJoinLogInfo(/** @noinspection PhpUnusedParameterInspection */
-		Match $match, MatchSession $session){
-		return SpectatorJoinLogInfo::get($session->getUid());
-	}
 }
